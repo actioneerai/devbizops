@@ -1,0 +1,21 @@
+{
+  "name": "devbizops",
+  "version": "1.0.0",
+  "description": "A unified dashboard connecting technical and business metrics",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo \"Error: no start script specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "dashboard",
+    "metrics",
+    "business",
+    "technical",
+    "AI"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
