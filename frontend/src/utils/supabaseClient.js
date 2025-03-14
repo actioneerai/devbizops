@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { SUPABASE_URL, SUPABASE_ANON_KEY, USE_HARDCODED_CREDENTIALS } from './supabaseCredentials';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from './supabaseCredentials';
 import config from '../config';
 
 // Enhanced debugging
