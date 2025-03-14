@@ -13,6 +13,7 @@ console.log('Available env vars:', Object.keys(process.env).filter(key => key.st
 // Check if environment variables are properly set
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase environment variables not properly configured. Using mock client.');
+  console.warn('Please ensure REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY are set in Vercel environment variables.');
 }
 
 // Create a single supabase client for interacting with the database
