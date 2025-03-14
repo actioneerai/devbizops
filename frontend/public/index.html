@@ -27,6 +27,13 @@
     <title>DevBizOps</title>
     <!-- Fix for console warnings -->
     <script src="%PUBLIC_URL%/fix-warnings.js"></script>
+    <!-- Environment variables for production -->
+    <script>
+      window.ENV = {
+        REACT_APP_SUPABASE_URL: "https://mffkbldzuvtqxirwzbwo.supabase.co",
+        REACT_APP_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZmtibGR6dXZ0cXhpcnd6YndvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE5NjcwODMsImV4cCI6MjA1NzU0MzA4M30.XYogzGM8cgBcWMS3GjN6pCB8CKpVDfDs00iFIRXSJXI"
+      };
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
