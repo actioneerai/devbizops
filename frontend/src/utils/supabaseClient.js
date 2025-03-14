@@ -1,9 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize the Supabase client
-// Try to get environment variables from process.env or fallback to window.ENV
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || (window.ENV && window.ENV.REACT_APP_SUPABASE_URL);
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || (window.ENV && window.ENV.REACT_APP_SUPABASE_ANON_KEY);
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 // Log environment variables for debugging (without exposing full keys)
 console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
