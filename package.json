@@ -14,8 +14,8 @@
     "technical",
     "AI"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Actioneer, Inc.",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {}
 }
