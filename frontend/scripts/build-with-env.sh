@@ -26,7 +26,7 @@ fi
 
 # Run the standard build process
 echo "Running react-scripts build..."
-CI=false react-scripts build
+CI=false BUILD_PATH=./build react-scripts build
 
 # Create a runtime-config.js file with environment variables
 echo "Creating runtime-config.js with environment variables"
@@ -54,3 +54,8 @@ window.DEBUG_VALUES = {
 };
 EOL
 echo "debug-values.js created"
+
+# Move the build directory to the correct location
+echo "Moving build directory to frontend/build"
+mkdir -p frontend
+mv build frontend/
