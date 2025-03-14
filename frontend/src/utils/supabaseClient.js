@@ -1,17 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
-import config from '../config';
 
-// Get Supabase credentials from our config file
-const supabaseUrl = config.supabase.url;
-const supabaseAnonKey = config.supabase.anonKey;
+// Access environment variables directly
+// These are injected during the build process by Vercel
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-// For debugging, also check direct environment variables
-const envSupabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const envSupabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+// For debugging purposes
+console.log('Raw SUPABASE_URL:', supabaseUrl);
+console.log('Raw SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Has value' : 'No value');
 
-// Use the most reliable source of credentials
-const effectiveSupabaseUrl = supabaseUrl || envSupabaseUrl || '';
-const effectiveSupabaseAnonKey = supabaseAnonKey || envSupabaseAnonKey || '';
+// Use the environment variables directly
+const effectiveSupabaseUrl = supabaseUrl || '';
+const effectiveSupabaseAnonKey = supabaseAnonKey || '';
 
 // Log environment variables for debugging (without exposing full keys)
 console.log('Supabase URL:', effectiveSupabaseUrl ? 'Set' : 'Not set');
