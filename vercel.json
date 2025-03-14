@@ -16,14 +16,10 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
-    },
-    {
       "handle": "filesystem"
     },
     {
-      "src": "/.*",
+      "src": "^[^/.]+$",
       "dest": "/frontend/index.html"
     }
   ]
