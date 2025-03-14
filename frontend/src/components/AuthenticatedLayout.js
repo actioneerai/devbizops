@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const AuthenticatedLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { logout, user } = useAuth();
-  const location = useLocation();
 
   // Get user initials for avatar
   const getUserInitials = () => {

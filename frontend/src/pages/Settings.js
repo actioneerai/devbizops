@@ -10,7 +10,7 @@ const Settings = () => {
   // Get auth, notification, and integrations hooks
   const { user, updateProfile, updatePassword } = useAuth();
   const { success, error } = useNotification();
-  const { integrations, loading: integrationsLoading, addIntegration, updateIntegration, deleteIntegration, toggleIntegrationStatus } = useIntegrations();
+  const { integrations, loading: integrationsLoading, addIntegration, deleteIntegration, toggleIntegrationStatus } = useIntegrations();
   
   // State for settings
   const [settings, setSettings] = useState({

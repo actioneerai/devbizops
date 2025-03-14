@@ -16,7 +16,6 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   
   // Get notification functions with fallbacks in case the context isn't available yet
@@ -24,10 +23,7 @@ export const AuthProvider = ({ children }) => {
   const success = notificationContext?.success || (msg => console.log('Success:', msg));
   const showError = notificationContext?.error || (msg => console.error('Error:', msg));
 
-  // Update isAuthenticated when user changes
-  useEffect(() => {
-    setIsAuthenticated(!!user);
-  }, [user]);
+
 
   useEffect(() => {
     // Check for existing session on component mount

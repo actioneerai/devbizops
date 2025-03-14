@@ -122,10 +122,10 @@ export const MetricsProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [metrics.length]);
+  }, [metrics.length, sampleMetrics]);
 
   // Add new metric
-  const addMetric = async (metricData) => {
+  const addMetric = React.useCallback(async (metricData) => {
     setLoading(true);
     try {
       const newMetric = {
@@ -140,10 +140,10 @@ export const MetricsProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Update metric
-  const updateMetric = async (id, updates) => {
+  const updateMetric = React.useCallback(async (id, updates) => {
     setLoading(true);
     try {
       setMetrics(prev => prev.map(metric => 
@@ -155,10 +155,10 @@ export const MetricsProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Delete metric
-  const deleteMetric = async (id) => {
+  const deleteMetric = React.useCallback(async (id) => {
     setLoading(true);
     try {
       setMetrics(prev => prev.filter(metric => metric.id !== id));
@@ -168,10 +168,10 @@ export const MetricsProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Toggle favorite status
-  const toggleFavorite = async (id) => {
+  const toggleFavorite = React.useCallback(async (id) => {
     try {
       setMetrics(prev => prev.map(metric => 
         metric.id === id ? { ...metric, isFavorite: !metric.isFavorite } : metric
@@ -180,7 +180,7 @@ export const MetricsProvider = ({ children }) => {
     } catch (err) {
       return { error: err };
     }
-  };
+  }, []);
 
   const value = React.useMemo(() => ({
     metrics,
