@@ -16,7 +16,7 @@ export const MetricsProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // Sample metrics data for demonstration
-  const sampleMetrics = [
+  const sampleMetrics = React.useMemo(() => [
     {
       id: 'sample-1',
       name: 'Code Deployments',
@@ -106,7 +106,7 @@ export const MetricsProvider = ({ children }) => {
       visualType: 'status',
       isFavorite: false
     }
-  ];
+  ], []);
 
   // Fetch metrics (simulated)
   const fetchMetrics = React.useCallback(async () => {
@@ -122,7 +122,7 @@ export const MetricsProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [metrics.length, sampleMetrics]);
+  }, [metrics.length]);
 
   // Add new metric
   const addMetric = React.useCallback(async (metricData) => {
