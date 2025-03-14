@@ -122,7 +122,7 @@ export const MetricsProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [metrics.length]);
+  }, [metrics.length, sampleMetrics]);
 
   // Add new metric
   const addMetric = React.useCallback(async (metricData) => {
