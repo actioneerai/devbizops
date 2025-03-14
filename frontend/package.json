@@ -22,7 +22,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "./scripts/build-with-env.sh",
+    "build": "react-scripts build",
+    "build:env": "./scripts/build-with-env.sh",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
