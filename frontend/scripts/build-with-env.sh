@@ -1,6 +1,9 @@
 #!/bin/bash
 # This script runs the build process and injects environment variables into the build files
 
+# Print the current working directory for debugging
+echo "Current working directory: $(pwd)"
+
 # Run the debug environment script to see what variables are available
 echo "Running debug environment script..."
 node scripts/debug-env.js
@@ -30,7 +33,11 @@ fi
 
 # Run the standard build process
 echo "Running react-scripts build..."
-CI=false BUILD_PATH=./build react-scripts build
+CI=false react-scripts build
+
+# Debug the build output
+echo "Listing build output directory:"
+ls -la build
 
 # Create a runtime-config.js file with environment variables
 echo "Creating runtime-config.js with environment variables"
@@ -69,3 +76,20 @@ window.DEBUG_VALUES = {
 };
 EOL
 echo "debug-values.js created"
+
+# Create a simple test file to verify the server can serve files
+echo "Creating test.html for deployment verification"
+cat > build/test.html << EOL
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DevBizOps Deployment Test</title>
+</head>
+<body>
+  <h1>DevBizOps Deployment Test</h1>
+  <p>If you can see this page, static file serving is working correctly.</p>
+  <p>Generated: $(date)</p>
+</body>
+</html>
+EOL
+echo "test.html created"
