@@ -1,21 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
-import { getEnvVariable } from './envHelper';
+import config from '../config';
 
-// First try to get variables from runtime config (for production)
-// Then fall back to process.env (for development)
-const getRuntimeVar = (name) => {
-  // Check if window.ENV_CONFIG exists and has the variable
-  if (window.ENV_CONFIG && window.ENV_CONFIG[name] && 
-      window.ENV_CONFIG[name] !== `%${name}%`) { // Make sure it's not the placeholder
-    return window.ENV_CONFIG[name];
-  }
-  // Fall back to process.env
-  return getEnvVariable(name);
-};
+// Get Supabase credentials from our config file
+const supabaseUrl = config.supabase.url;
+const supabaseAnonKey = config.supabase.anonKey;
 
-// Initialize the Supabase client using runtime configuration
-const effectiveSupabaseUrl = getRuntimeVar('REACT_APP_SUPABASE_URL');
-const effectiveSupabaseAnonKey = getRuntimeVar('REACT_APP_SUPABASE_ANON_KEY');
+// For debugging, also check direct environment variables
+const envSupabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const envSupabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+// Use the most reliable source of credentials
+const effectiveSupabaseUrl = supabaseUrl || envSupabaseUrl || '';
+const effectiveSupabaseAnonKey = supabaseAnonKey || envSupabaseAnonKey || '';
 
 // Log environment variables for debugging (without exposing full keys)
 console.log('Supabase URL:', effectiveSupabaseUrl ? 'Set' : 'Not set');
