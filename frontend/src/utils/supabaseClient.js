@@ -49,12 +49,7 @@ console.log('Raw SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Has value' : 'No value'
 let effectiveSupabaseUrl = supabaseUrl || '';
 let effectiveSupabaseAnonKey = supabaseAnonKey || '';
 
-// Only use hardcoded credentials if explicitly enabled and no other credentials are available
-if (USE_HARDCODED_CREDENTIALS && (!effectiveSupabaseUrl || !effectiveSupabaseAnonKey)) {
-  console.log('Using hardcoded credentials for testing purposes');
-  effectiveSupabaseUrl = SUPABASE_URL;
-  effectiveSupabaseAnonKey = SUPABASE_ANON_KEY;
-}
+// No hardcoded credentials - we only use environment variables
 
 // Log environment variables for debugging (without exposing full keys)
 console.log('Supabase URL:', effectiveSupabaseUrl ? 'Set' : 'Not set');
