@@ -1,9 +1,13 @@
 #!/bin/bash
-# This script runs the build process and injects environment variables into the debug.html file
+# This script runs the build process and injects environment variables into the build files
 
 # Run the debug environment script to see what variables are available
 echo "Running debug environment script..."
 node scripts/debug-env.js
+
+# Generate the config.js file in src directory
+echo "Generating config.js file..."
+node scripts/generate-config.js
 
 # Echo environment variables for debugging (without showing full values)
 echo "Building with environment variables:"
@@ -40,22 +44,28 @@ window.RUNTIME_CONFIG = {
 EOL
 echo "runtime-config.js created"
 
+# Create an env-config.js file with environment variables (matching the format in public/env-config.js)
+echo "Creating env-config.js with environment variables"
+cat > build/env-config.js << EOL
+// This file is auto-generated during the build process
+window.ENV_CONFIG = {
+  REACT_APP_SUPABASE_URL: "${REACT_APP_SUPABASE_URL}",
+  REACT_APP_SUPABASE_ANON_KEY: "${REACT_APP_SUPABASE_ANON_KEY}"
+};
+EOL
+echo "env-config.js created"
+
 # Create a debug file to show what was actually injected
 echo "Creating debug-values.js with actual injected values"
 cat > build/debug-values.js << EOL
 // Debug values generated during build
 // Generated on: $(date)
 window.DEBUG_VALUES = {
-  buildTime: "$(date)",
-  REACT_APP_SUPABASE_URL_SET: "${REACT_APP_SUPABASE_URL:+yes}",
-  REACT_APP_SUPABASE_ANON_KEY_SET: "${REACT_APP_SUPABASE_ANON_KEY:+yes}",
-  REACT_APP_SUPABASE_URL_PREFIX: "${REACT_APP_SUPABASE_URL:0:5}",
-  REACT_APP_SUPABASE_ANON_KEY_PREFIX: "${REACT_APP_SUPABASE_ANON_KEY:0:5}"
+  buildTime: "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+  REACT_APP_SUPABASE_URL_SET: "${REACT_APP_SUPABASE_URL:+true}",
+  REACT_APP_SUPABASE_ANON_KEY_SET: "${REACT_APP_SUPABASE_ANON_KEY:+true}",
+  REACT_APP_SUPABASE_URL_PREFIX: "${REACT_APP_SUPABASE_URL:0:10}...",
+  REACT_APP_SUPABASE_ANON_KEY_PREFIX: "${REACT_APP_SUPABASE_ANON_KEY:0:5}..."
 };
 EOL
 echo "debug-values.js created"
-
-# Move the build directory to the correct location
-echo "Moving build directory to frontend/build"
-mkdir -p frontend
-mv build frontend/

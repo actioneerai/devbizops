@@ -1,5 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
 /**
  * Supabase credentials configuration
  * 
@@ -11,16 +9,14 @@ import { createClient } from '@supabase/supabase-js';
 // This should be false in production where Vercel environment variables are used directly
 export const USE_HARDCODED_CREDENTIALS = false;
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+// Export these constants for use in supabaseClient.js
+export const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
+export const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl) {
+// Log environment variable status
+if (!SUPABASE_URL) {
   console.error('REACT_APP_SUPABASE_URL is not defined in environment variables.');
 }
-if (!supabaseAnonKey) {
+if (!SUPABASE_ANON_KEY) {
   console.error('REACT_APP_SUPABASE_ANON_KEY is not defined in environment variables.');
 }
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-export { supabase };

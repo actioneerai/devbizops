@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, USE_HARDCODED_CREDENTIALS } from './supabaseCredentials';
+import config from '../config';
 
 // Enhanced debugging
 console.log('=================== SUPABASE CLIENT INITIALIZATION ===================');
@@ -12,58 +13,75 @@ if (window.DEBUG_VALUES) {
   console.log('SUPABASE_ANON_KEY prefix:', window.DEBUG_VALUES.REACT_APP_SUPABASE_ANON_KEY_PREFIX || 'None');
 }
 
-// Try to get credentials from multiple sources
-// 1. Runtime config (injected during build)
-// 2. Environment variables (for development)
-// 3. Hardcoded values for testing (only if explicitly enabled)
-const getRuntimeVar = (name) => {
-  // Check if window.RUNTIME_CONFIG exists and has the variable
-  if (window.RUNTIME_CONFIG && window.RUNTIME_CONFIG[name] && window.RUNTIME_CONFIG[name] !== 'undefined' && window.RUNTIME_CONFIG[name] !== '') {
-    console.log(`${name} found in RUNTIME_CONFIG`);
-    return window.RUNTIME_CONFIG[name];
+// Try to get credentials from multiple sources in priority order
+const getCredentials = () => {
+  // 1. Check if window.ENV_CONFIG exists (runtime injection)
+  if (window.ENV_CONFIG && 
+      window.ENV_CONFIG.REACT_APP_SUPABASE_URL && 
+      window.ENV_CONFIG.REACT_APP_SUPABASE_ANON_KEY &&
+      window.ENV_CONFIG.REACT_APP_SUPABASE_URL !== '%REACT_APP_SUPABASE_URL%' &&
+      window.ENV_CONFIG.REACT_APP_SUPABASE_ANON_KEY !== '%REACT_APP_SUPABASE_ANON_KEY%') {
+    console.log('Using Supabase credentials from ENV_CONFIG (runtime injection)');
+    return {
+      url: window.ENV_CONFIG.REACT_APP_SUPABASE_URL,
+      key: window.ENV_CONFIG.REACT_APP_SUPABASE_ANON_KEY
+    };
+  }
+
+  // 2. Check if window.RUNTIME_CONFIG exists (also runtime injection)
+  if (window.RUNTIME_CONFIG && 
+      window.RUNTIME_CONFIG.REACT_APP_SUPABASE_URL && 
+      window.RUNTIME_CONFIG.REACT_APP_SUPABASE_ANON_KEY) {
+    console.log('Using Supabase credentials from RUNTIME_CONFIG');
+    return {
+      url: window.RUNTIME_CONFIG.REACT_APP_SUPABASE_URL,
+      key: window.RUNTIME_CONFIG.REACT_APP_SUPABASE_ANON_KEY
+    };
   }
   
-  // Fall back to process.env
-  if (process.env[name] && process.env[name] !== 'undefined' && process.env[name] !== '') {
-    console.log(`${name} found in process.env`);
-    return process.env[name];
+  // 3. Check if they exist in the config.js file (build-time injection)
+  if (config && config.supabase && config.supabase.url && config.supabase.anonKey) {
+    console.log('Using Supabase credentials from config.js (build-time injection)');
+    return {
+      url: config.supabase.url,
+      key: config.supabase.anonKey
+    };
   }
   
-  console.log(`${name} not found in any source`);
-  return '';
+  // 4. Use from imported environment variables (for development)
+  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+    console.log('Using Supabase credentials from environment variables');
+    return {
+      url: SUPABASE_URL,
+      key: SUPABASE_ANON_KEY
+    };
+  }
+  
+  // 5. Last resort - check process.env directly
+  if (process.env.REACT_APP_SUPABASE_URL && process.env.REACT_APP_SUPABASE_ANON_KEY) {
+    console.log('Using Supabase credentials from process.env');
+    return {
+      url: process.env.REACT_APP_SUPABASE_URL,
+      key: process.env.REACT_APP_SUPABASE_ANON_KEY
+    };
+  }
+  
+  console.error('Could not find valid Supabase credentials in any source');
+  return { url: '', key: '' };
 };
 
-// Get Supabase credentials from runtime config or environment variables
-const supabaseUrl = getRuntimeVar('REACT_APP_SUPABASE_URL');
-const supabaseAnonKey = getRuntimeVar('REACT_APP_SUPABASE_ANON_KEY');
-
-// For debugging purposes
-console.log('Runtime config available:', window.RUNTIME_CONFIG ? 'Yes' : 'No');
-if (window.RUNTIME_CONFIG) {
-  console.log('RUNTIME_CONFIG contents:', JSON.stringify(window.RUNTIME_CONFIG, null, 2));
-}
-console.log('Raw SUPABASE_URL:', supabaseUrl || 'Not set');
-console.log('Raw SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Has value' : 'No value');
-
-// Use the credentials with fallback to hardcoded values if enabled
-let effectiveSupabaseUrl = supabaseUrl || '';
-let effectiveSupabaseAnonKey = supabaseAnonKey || '';
-
-// No hardcoded credentials - we only use environment variables
+// Get the credentials from the best available source
+const credentials = getCredentials();
+const effectiveSupabaseUrl = credentials.url;
+const effectiveSupabaseAnonKey = credentials.key;
 
 // Log environment variables for debugging (without exposing full keys)
-console.log('Supabase URL:', effectiveSupabaseUrl ? 'Set' : 'Not set');
-console.log('Supabase Anon Key:', effectiveSupabaseAnonKey ? 'Set' : 'Not set');
-console.log('Environment:', process.env.NODE_ENV);
+console.log('Supabase URL:', effectiveSupabaseUrl ? `Set (${effectiveSupabaseUrl.substring(0, 10)}...)` : 'Not set');
+console.log('Supabase Anon Key:', effectiveSupabaseAnonKey ? `Set (${effectiveSupabaseAnonKey.substring(0, 5)}...)` : 'Not set');
+console.log('Environment:', process.env.NODE_ENV || 'unknown');
 console.log('Available env vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')).join(', '));
-console.log('Effective URL:', effectiveSupabaseUrl ? 'Valid' : 'Invalid');
-console.log('Effective Key:', effectiveSupabaseAnonKey ? 'Valid' : 'Invalid');
-
-// Check if environment variables are properly set
-if (!effectiveSupabaseUrl || !effectiveSupabaseAnonKey) {
-  console.warn('Supabase environment variables not properly configured. Using mock client.');
-  console.warn('Please ensure REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY are set in Vercel environment variables.');
-}
+console.log('Window env available:', window.ENV_CONFIG ? 'Yes' : 'No');
+console.log('Window runtime config available:', window.RUNTIME_CONFIG ? 'Yes' : 'No');
 
 // Create a single supabase client for interacting with the database
 let supabase;
@@ -73,6 +91,7 @@ try {
   if (!effectiveSupabaseUrl || !effectiveSupabaseAnonKey) {
     throw new Error('Supabase environment variables are missing. Please check Vercel environment configuration.');
   }
+  
   supabase = createClient(effectiveSupabaseUrl, effectiveSupabaseAnonKey, {
     auth: {
       autoRefreshToken: true,

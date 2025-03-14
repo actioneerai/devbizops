@@ -1,3 +1,40 @@
+// Configuration initialization
+// Ensure window.RUNTIME_CONFIG and window.ENV_CONFIG exist
+window.RUNTIME_CONFIG = window.RUNTIME_CONFIG || {};
+window.ENV_CONFIG = window.ENV_CONFIG || {};
+window.DEBUG_VALUES = window.DEBUG_VALUES || {
+  buildTime: new Date().toISOString(),
+  REACT_APP_SUPABASE_URL_SET: false,
+  REACT_APP_SUPABASE_ANON_KEY_SET: false
+};
+
+// Handle missing environment scripts by creating a fallback
+document.addEventListener('DOMContentLoaded', function() {
+  // Check if runtime-config.js was loaded
+  if (!window.RUNTIME_CONFIG.REACT_APP_SUPABASE_URL || window.RUNTIME_CONFIG.REACT_APP_SUPABASE_URL === '') {
+    console.warn('runtime-config.js not loaded correctly. Creating fallback configuration.');
+    // Create element for runtime config if it doesn't exist
+    if (!document.getElementById('runtime-config-fallback')) {
+      var runtimeScript = document.createElement('script');
+      runtimeScript.id = 'runtime-config-fallback';
+      runtimeScript.innerHTML = 'window.RUNTIME_CONFIG = window.RUNTIME_CONFIG || {}';
+      document.head.appendChild(runtimeScript);
+    }
+  }
+
+  // Check if env-config.js was loaded
+  if (!window.ENV_CONFIG.REACT_APP_SUPABASE_URL || window.ENV_CONFIG.REACT_APP_SUPABASE_URL === '%REACT_APP_SUPABASE_URL%') {
+    console.warn('env-config.js not loaded correctly. Creating fallback configuration.');
+    // Create element for env config if it doesn't exist
+    if (!document.getElementById('env-config-fallback')) {
+      var envScript = document.createElement('script');
+      envScript.id = 'env-config-fallback';
+      envScript.innerHTML = 'window.ENV_CONFIG = window.ENV_CONFIG || {}';
+      document.head.appendChild(envScript);
+    }
+  }
+});
+
 // More comprehensive fix for jQuery deprecation warnings
 (function() {
   // Wait for jQuery to be available
@@ -66,7 +103,7 @@ window.addEventListener('error', function(e) {
 }, true);
 
 // Fix for 404 on main page
-if (window.location.pathname === '/' && document.querySelector('body').innerHTML === '') {
+if (window.location.pathname === '/' && document.querySelector('body') && document.querySelector('body').innerHTML === '') {
   console.log('Detected 404 on main page, attempting to fix routing');
   // Force reload with hash to trigger client-side routing
   if (!window.location.hash) {
