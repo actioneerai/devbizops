@@ -7,6 +7,8 @@ const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 // Log environment variables for debugging (without exposing full keys)
 console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
 console.log('Supabase Anon Key:', supabaseAnonKey ? 'Set' : 'Not set');
+console.log('Environment:', process.env.NODE_ENV);
+console.log('Available env vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')).join(', '));
 
 // Check if environment variables are properly set
 if (!supabaseUrl || !supabaseAnonKey) {
@@ -17,7 +19,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
 let supabase;
 
 try {
-  // Create the Supabase client
+  // Create the Supabase client with proper error handling
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error('Supabase environment variables are missing. Please check Vercel environment configuration.');
+  }
   supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: true,
