@@ -4,6 +4,7 @@
  * IMPORTANT: This file does NOT contain any actual credentials
  * All credentials must be set in environment variables
  */
+import { createClient } from '@supabase/supabase-js';
 
 // Flag to control whether to use environment variables from window.ENV
 // This should be false in production where Vercel environment variables are used directly
@@ -20,3 +21,10 @@ if (!SUPABASE_URL) {
 if (!SUPABASE_ANON_KEY) {
   console.error('REACT_APP_SUPABASE_ANON_KEY is not defined in environment variables.');
 }
+
+// Create and export a simple Supabase client to be used directly
+// For more advanced client with logging and fallbacks, use supabaseClient.js instead
+export const supabase = createClient(
+  SUPABASE_URL || '', 
+  SUPABASE_ANON_KEY || ''
+);
