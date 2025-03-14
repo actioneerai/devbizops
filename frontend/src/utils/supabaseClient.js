@@ -1,17 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
+import { getEnvVariable } from './envHelper';
 
-// Initialize the Supabase client
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+// Initialize the Supabase client using our environment helper
+// This ensures proper handling of environment variables in different environments
+const effectiveSupabaseUrl = getEnvVariable('REACT_APP_SUPABASE_URL');
+const effectiveSupabaseAnonKey = getEnvVariable('REACT_APP_SUPABASE_ANON_KEY');
 
 // Log environment variables for debugging (without exposing full keys)
-console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
-console.log('Supabase Anon Key:', supabaseAnonKey ? 'Set' : 'Not set');
+console.log('Supabase URL:', effectiveSupabaseUrl ? 'Set' : 'Not set');
+console.log('Supabase Anon Key:', effectiveSupabaseAnonKey ? 'Set' : 'Not set');
 console.log('Environment:', process.env.NODE_ENV);
 console.log('Available env vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')).join(', '));
+console.log('Effective URL:', effectiveSupabaseUrl ? 'Valid' : 'Invalid');
+console.log('Effective Key:', effectiveSupabaseAnonKey ? 'Valid' : 'Invalid');
 
 // Check if environment variables are properly set
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!effectiveSupabaseUrl || !effectiveSupabaseAnonKey) {
   console.warn('Supabase environment variables not properly configured. Using mock client.');
   console.warn('Please ensure REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY are set in Vercel environment variables.');
 }
@@ -21,10 +25,10 @@ let supabase;
 
 try {
   // Create the Supabase client with proper error handling
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!effectiveSupabaseUrl || !effectiveSupabaseAnonKey) {
     throw new Error('Supabase environment variables are missing. Please check Vercel environment configuration.');
   }
-  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  supabase = createClient(effectiveSupabaseUrl, effectiveSupabaseAnonKey, {
     auth: {
       autoRefreshToken: true,
       persistSession: true,
