@@ -1,15 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, USE_HARDCODED_CREDENTIALS } from './supabaseCredentials';
+
+// Enhanced debugging
+console.log('=================== SUPABASE CLIENT INITIALIZATION ===================');
+console.log('Debug values available:', window.DEBUG_VALUES ? 'Yes' : 'No');
+if (window.DEBUG_VALUES) {
+  console.log('Build time:', window.DEBUG_VALUES.buildTime);
+  console.log('SUPABASE_URL set during build:', window.DEBUG_VALUES.REACT_APP_SUPABASE_URL_SET || 'No');
+  console.log('SUPABASE_ANON_KEY set during build:', window.DEBUG_VALUES.REACT_APP_SUPABASE_ANON_KEY_SET || 'No');
+  console.log('SUPABASE_URL prefix:', window.DEBUG_VALUES.REACT_APP_SUPABASE_URL_PREFIX || 'None');
+  console.log('SUPABASE_ANON_KEY prefix:', window.DEBUG_VALUES.REACT_APP_SUPABASE_ANON_KEY_PREFIX || 'None');
+}
 
 // Try to get credentials from multiple sources
 // 1. Runtime config (injected during build)
 // 2. Environment variables (for development)
+// 3. Hardcoded values for testing (only if explicitly enabled)
 const getRuntimeVar = (name) => {
   // Check if window.RUNTIME_CONFIG exists and has the variable
-  if (window.RUNTIME_CONFIG && window.RUNTIME_CONFIG[name]) {
+  if (window.RUNTIME_CONFIG && window.RUNTIME_CONFIG[name] && window.RUNTIME_CONFIG[name] !== 'undefined' && window.RUNTIME_CONFIG[name] !== '') {
+    console.log(`${name} found in RUNTIME_CONFIG`);
     return window.RUNTIME_CONFIG[name];
   }
+  
   // Fall back to process.env
-  return process.env[name];
+  if (process.env[name] && process.env[name] !== 'undefined' && process.env[name] !== '') {
+    console.log(`${name} found in process.env`);
+    return process.env[name];
+  }
+  
+  console.log(`${name} not found in any source`);
+  return '';
 };
 
 // Get Supabase credentials from runtime config or environment variables
@@ -18,12 +39,22 @@ const supabaseAnonKey = getRuntimeVar('REACT_APP_SUPABASE_ANON_KEY');
 
 // For debugging purposes
 console.log('Runtime config available:', window.RUNTIME_CONFIG ? 'Yes' : 'No');
-console.log('Raw SUPABASE_URL:', supabaseUrl);
+if (window.RUNTIME_CONFIG) {
+  console.log('RUNTIME_CONFIG contents:', JSON.stringify(window.RUNTIME_CONFIG, null, 2));
+}
+console.log('Raw SUPABASE_URL:', supabaseUrl || 'Not set');
 console.log('Raw SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Has value' : 'No value');
 
-// Use the credentials
-const effectiveSupabaseUrl = supabaseUrl || '';
-const effectiveSupabaseAnonKey = supabaseAnonKey || '';
+// Use the credentials with fallback to hardcoded values if enabled
+let effectiveSupabaseUrl = supabaseUrl || '';
+let effectiveSupabaseAnonKey = supabaseAnonKey || '';
+
+// Only use hardcoded credentials if explicitly enabled and no other credentials are available
+if (USE_HARDCODED_CREDENTIALS && (!effectiveSupabaseUrl || !effectiveSupabaseAnonKey)) {
+  console.log('Using hardcoded credentials for testing purposes');
+  effectiveSupabaseUrl = SUPABASE_URL;
+  effectiveSupabaseAnonKey = SUPABASE_ANON_KEY;
+}
 
 // Log environment variables for debugging (without exposing full keys)
 console.log('Supabase URL:', effectiveSupabaseUrl ? 'Set' : 'Not set');
