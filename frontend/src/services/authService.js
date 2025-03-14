@@ -15,43 +15,31 @@ const authService = {
     try {
       console.log('Attempting to register user:', email);
       
-      // Use signUp with auto-confirm enabled for local development
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: userData, // Store additional user metadata
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+      // Use our secure API endpoint instead of direct Supabase client
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      });
-
-      if (error) {
-        console.error('Registration error:', error);
-        throw error;
-      }
-      
-      console.log('User registered successfully:', data);
-      
-      // For local development, we need to sign in immediately after registration
-      // since the trigger should handle profile creation automatically
-      if (data.user && !data.session) {
-        console.log('No session after registration, signing in...');
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        body: JSON.stringify({
+          action: 'signup',
           email,
           password,
-        });
-        
-        if (signInError) {
-          console.error('Auto sign-in error:', signInError);
-          throw signInError;
-        }
-        
-        console.log('Auto sign-in successful');
-        return { data: signInData, error: null };
+          userData
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error('Registration error:', result.error);
+        throw new Error(result.error || 'Registration failed');
       }
       
-      // Return the original data if we already have a session
-      return { data, error: null };
+      console.log('User registered successfully');
+      
+      // Automatically sign in after registration
+      return await authService.login(email, password);
     } catch (error) {
       console.error('Unexpected error during registration:', error);
       return { data: null, error };
@@ -68,18 +56,28 @@ const authService = {
     try {
       console.log('Attempting login for:', email);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Use our secure API endpoint instead of direct Supabase client
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'signin',
+          email,
+          password
+        }),
       });
-
-      if (error) {
-        console.error('Login error:', error);
-        throw error;
-      }
       
+      const result = await response.json();
+      
+      if (!response.ok) {
+        console.error('Login error:', result.error);
+        throw new Error(result.error || 'Login failed');
+      }
+
       console.log('Login successful for:', email);
-      return { data, error: null };
+      return { data: { user: result.user, session: result.session }, error: null };
     } catch (error) {
       console.error('Unexpected error during login:', error);
       return { data: null, error };
