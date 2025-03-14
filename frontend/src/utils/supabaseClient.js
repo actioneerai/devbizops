@@ -1,15 +1,27 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Access environment variables directly
-// These are injected during the build process by Vercel
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+// Try to get credentials from multiple sources
+// 1. Runtime config (injected during build)
+// 2. Environment variables (for development)
+const getRuntimeVar = (name) => {
+  // Check if window.RUNTIME_CONFIG exists and has the variable
+  if (window.RUNTIME_CONFIG && window.RUNTIME_CONFIG[name]) {
+    return window.RUNTIME_CONFIG[name];
+  }
+  // Fall back to process.env
+  return process.env[name];
+};
+
+// Get Supabase credentials from runtime config or environment variables
+const supabaseUrl = getRuntimeVar('REACT_APP_SUPABASE_URL');
+const supabaseAnonKey = getRuntimeVar('REACT_APP_SUPABASE_ANON_KEY');
 
 // For debugging purposes
+console.log('Runtime config available:', window.RUNTIME_CONFIG ? 'Yes' : 'No');
 console.log('Raw SUPABASE_URL:', supabaseUrl);
 console.log('Raw SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Has value' : 'No value');
 
-// Use the environment variables directly
+// Use the credentials
 const effectiveSupabaseUrl = supabaseUrl || '';
 const effectiveSupabaseAnonKey = supabaseAnonKey || '';
 
