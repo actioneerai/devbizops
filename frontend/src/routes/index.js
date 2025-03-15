@@ -3,6 +3,7 @@ import App from '../App';
 import Home from '../pages/Home';
 import Dashboard from '../pages/Dashboard';
 import Settings from '../pages/Settings';
+import AIAgents from '../pages/AIAgents';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -17,7 +18,7 @@ const router = createBrowserRouter([
       // Public routes
       {
         path: '/',
-        element: <Home />,
+        element: <Home />
       },
       {
         path: '/login',
@@ -30,11 +31,7 @@ const router = createBrowserRouter([
       // Protected routes with authenticated layout
       {
         path: '/',
-        element: (
-          <ProtectedRoute>
-            <AuthenticatedLayout />
-          </ProtectedRoute>
-        ),
+        element: <ProtectedRoute><AuthenticatedLayout /></ProtectedRoute>,
         children: [
           {
             path: 'dashboard',
@@ -44,6 +41,10 @@ const router = createBrowserRouter([
             path: 'settings',
             element: <Settings />,
           },
+          {
+            path: 'ai-agents',
+            element: <AIAgents />,
+          }
         ],
       },
       // Fallback route
