@@ -43,12 +43,25 @@ const Login = () => {
       const { error } = await login(formData.email, formData.password, formData.rememberMe);
       
       if (error) {
-        setError(error.message || 'Invalid email or password. Please try again.');
-        showError(error.message || 'Login failed');
+        // Check for rate limiting errors
+        if (error.status === 429 || error.message?.includes('too many requests')) {
+          setError('Too many login attempts. Please try again later.');
+          showError('Rate limit exceeded. Please try again later.');
+        } else {
+          setError(error.message || 'Invalid email or password. Please try again.');
+          showError(error.message || 'Login failed');
+        }
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-      showError('An unexpected error occurred');
+      console.error('Login error:', err);
+      // Check for rate limiting in generic error
+      if (err.message?.includes('429') || err.message?.includes('Too Many Requests')) {
+        setError('Too many login attempts. Please try again later.');
+        showError('Rate limit exceeded');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+        showError('An unexpected error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
