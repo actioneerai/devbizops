@@ -12,13 +12,13 @@ The project uses a modern, modular design that leverages Node.js and Express.js 
 
 The backend uses PostgreSQL as its primary database system to manage structured data securely and efficiently. Information such as user profiles, role-based access controls, dashboard configurations, and transaction logs are stored systematically. Data from external sources like code repositories, development task boards, and CRM systems is structured and ingested into a unified system that makes it easy to correlate technical events with business outcomes. Practices such as regular database audits and performance optimizations are in place to ensure data integrity and timely access across the platform.
 
-## API Design and Endpoints
+## API Design and Integration
 
-The backend exposes a comprehensive set of APIs that are primarily designed using RESTful principles. These endpoints handle everything from user onboarding and authentication to the real-time interaction with AI agents. For example, there are dedicated endpoints for processing the output from the TechTranslator Agent, updating roadmaps from the RoadmapAgent, and delivering investor-ready visuals through the InvestorDashboardAgent. The API structure seamlessly facilitates communication between the frontend and backend, ensuring that technical data and business metrics are always aligned and up-to-date.
+The application uses Supabase client SDK to interact directly with Supabase's API endpoints. This client-side approach eliminates the need for custom server-side API endpoints while still providing comprehensive functionality. Authentication operations (signup, login, password reset) are handled directly through Supabase Auth's client methods. Data operations use Supabase's PostgreSQL interface for querying and manipulating data. The application is designed to work entirely client-side, with Supabase handling the backend operations securely. This architecture reduces development complexity while ensuring that technical data and business metrics are always aligned and up-to-date.
 
 ## Hosting Solutions
 
-The DevBizOps backend is hosted on a cloud platform that ensures reliability and flexibility. The project leverages AWS infrastructure, with services like S3 for static content storage and additional cloud features for compute and networking needs. The decision to use a cloud-based hosting solution comes from the need for scalability and high availability. Cloud services allow for elastic resource management, which means the platform can handle spikes in user activity and data traffic without compromising performance or cost-efficiency.
+The DevBizOps frontend is hosted on Vercel, a modern platform optimized for React applications, ensuring reliability and high performance. The backend services are provided by Supabase's managed cloud infrastructure. This serverless approach eliminates the need for dedicated server management while providing excellent scalability and high availability. Vercel handles all static content hosting and delivery through its global CDN, while Supabase manages the database, authentication, and storage services. This cloud-based architecture allows the platform to handle spikes in user activity and data traffic without compromising performance or cost-efficiency, with minimal infrastructure maintenance required.
 
 ## Infrastructure Components
 
@@ -26,7 +26,7 @@ The infrastructure is built with critical components that work together to provi
 
 ## Security Measures
 
-Security is integral to the DevBizOps backend and is woven into every layer of the system. The platform employs JWT for authentication, ensuring that every request is properly validated. Role-based access control ensures that users only have access to the data and actions that are relevant to their responsibilities. Data is encrypted both in transit and at rest to protect sensitive information, and regular audits are conducted to maintain compliance with regulations such as GDPR and CCPA. These measures help safeguard the system against unauthorized access while maintaining the trust of its users.
+Security is integral to the DevBizOps system and is implemented at multiple levels. The application uses Supabase Auth, which provides secure JWT-based authentication and session management. All communication with Supabase is over HTTPS, ensuring data encryption in transit. Supabase handles data encryption at rest and provides Row-Level Security (RLS) policies to enforce fine-grained access control at the database level. The client-side application implements role-based permissions to ensure users only access data and features relevant to their responsibilities. By leveraging Supabase's security features and following security best practices in the client application, the system maintains strong protection against unauthorized access while ensuring compliance with regulations such as GDPR and CCPA.
 
 ## Monitoring and Maintenance
 
