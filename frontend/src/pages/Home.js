@@ -1,7 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
+  const { enableDemoMode } = useAuth();
+  
+  const handleDemoClick = (e) => {
+    e.preventDefault();
+    enableDemoMode();
+    window.location.href = '/demo/dashboard';
+  };
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
       {/* Hero Section */}
@@ -13,12 +22,12 @@ const Home = () => {
           <p className="text-xl text-gray-300 mb-8">
             Where technical excellence and business growth move in perfect harmony
           </p>
-          <Link
-            to="/register"
+          <button
+            onClick={handleDemoClick}
             className="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors"
           >
-            Join the Revolution
-          </Link>
+            View Demo Dashboard
+          </button>
         </div>
       </div>
 
@@ -70,17 +79,18 @@ const Home = () => {
             Join us in creating a world where startups move faster with greater confidence
           </p>
           <div className="flex justify-center space-x-4">
-            <Link
-              to="/register"
+            <button
+              onClick={handleDemoClick}
               className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-colors"
             >
-              Get Started
-            </Link>
+              Try the Dashboard Demo
+            </button>
             <Link
-              to="/login"
+              to="/demo/ai-agents"
               className="px-8 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold transition-colors"
+              onClick={() => enableDemoMode()}
             >
-              Sign In
+              Explore AI Agents Demo
             </Link>
           </div>
         </div>

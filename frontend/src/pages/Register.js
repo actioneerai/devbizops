@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseCredentials';
+import { useAuth } from '../contexts/AuthContext';
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -8,6 +9,15 @@ function Register() {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { isDemoMode, enableDemoMode } = useAuth();
+  
+  // Redirect to demo if in demo mode
+  useEffect(() => {
+    if (isDemoMode) {
+      navigate('/demo/dashboard', { replace: true });
+    }
+  }, [isDemoMode, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -93,7 +103,7 @@ function Register() {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-3">
             <button
               type="submit"
               disabled={loading}
@@ -102,6 +112,17 @@ function Register() {
               } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
               {loading ? 'Creating account...' : 'Create account'}
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => {
+                enableDemoMode();
+                navigate('/demo/dashboard');
+              }}
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Try Demo Instead
             </button>
           </div>
           

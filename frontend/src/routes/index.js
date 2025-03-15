@@ -28,6 +28,29 @@ const router = createBrowserRouter([
         path: '/register',
         element: <Register />,
       },
+      // Demo routes - uses same components but with demo user
+      {
+        path: '/demo',
+        element: <Home />
+      },
+      {
+        path: '/demo',
+        element: <ProtectedRoute><AuthenticatedLayout /></ProtectedRoute>,
+        children: [
+          {
+            path: 'dashboard',
+            element: <Dashboard />,
+          },
+          {
+            path: 'settings',
+            element: <Settings />,
+          },
+          {
+            path: 'ai-agents',
+            element: <AIAgents />,
+          }
+        ],
+      },
       // Protected routes with authenticated layout
       {
         path: '/',

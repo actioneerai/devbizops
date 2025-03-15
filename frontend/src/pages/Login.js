@@ -13,7 +13,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, isDemoMode, enableDemoMode } = useAuth();
   const { error: showError } = useNotification();
 
   // No need for initial auth check as ProtectedRoute handles this
@@ -26,13 +26,20 @@ const Login = () => {
     });
   };
 
-  // Check if user is already authenticated
+  // Check if user is already authenticated or in demo mode
   useEffect(() => {
+    // Redirect to demo dashboard if in demo mode
+    if (isDemoMode) {
+      navigate('/demo/dashboard', { replace: true });
+      return;
+    }
+    
+    // Otherwise redirect to regular dashboard if authenticated
     if (isAuthenticated) {
       const from = location.state?.from?.pathname || '/dashboard';
       navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, isDemoMode, navigate, location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,7 +159,7 @@ const Login = () => {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-3">
             <button
               type="submit"
               disabled={isLoading}
@@ -165,6 +172,17 @@ const Login = () => {
                 </svg>
               ) : null}
               Sign in
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => {
+                enableDemoMode();
+                navigate('/demo/dashboard');
+              }}
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Try Demo Instead
             </button>
           </div>
           

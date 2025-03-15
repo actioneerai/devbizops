@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const AuthenticatedLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const { logout, user } = useAuth();
+  const { logout, user, isDemoMode } = useAuth();
 
   // Get user initials for avatar
   const getUserInitials = () => {
@@ -72,15 +72,24 @@ const AuthenticatedLayout = () => {
             </Link>
           </div>
           <div className="px-4 py-2 absolute bottom-0 mb-4 w-full">
-            <button 
-              onClick={handleLogout} 
-              className="flex items-center py-2 px-4 text-white hover:bg-indigo-700 rounded-md transition-colors w-full"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              {isSidebarOpen && <span>Logout</span>}
-            </button>
+            {isDemoMode ? (
+              <div className="flex items-center py-2 px-4 text-green-300 rounded-md w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {isSidebarOpen && <span>Demo Mode Active</span>}
+              </div>
+            ) : (
+              <button 
+                onClick={handleLogout} 
+                className="flex items-center py-2 px-4 text-white hover:bg-indigo-700 rounded-md transition-colors w-full"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                {isSidebarOpen && <span>Logout</span>}
+              </button>
+            )}
           </div>
         </nav>
       </div>
@@ -89,7 +98,14 @@ const AuthenticatedLayout = () => {
       <div className="flex-1 overflow-auto">
         <header className="bg-white shadow-sm">
           <div className="px-4 py-3 flex justify-between items-center">
-            <h1 className="text-xl font-semibold text-gray-800">DevBizOps Dashboard</h1>
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gray-800">DevBizOps Dashboard</h1>
+              {isDemoMode && (
+                <span className="ml-3 px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                  Demo Mode
+                </span>
+              )}
+            </div>
             <div className="flex items-center space-x-4">
               <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
                 {getUserInitials()}

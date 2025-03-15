@@ -6,8 +6,8 @@ import { useAuth } from '../contexts/AuthContext';
  * A wrapper component for routes that require authentication
  * Redirects to login if user is not authenticated
  */
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+const ProtectedRoute = ({ children, allowDemo = true }) => {
+  const { isAuthenticated, loading, isDemoMode } = useAuth();
   const location = useLocation();
 
   // Show nothing while checking authentication status
@@ -17,6 +17,11 @@ const ProtectedRoute = ({ children }) => {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
+  }
+
+  // Handle demo mode - only if allowDemo is true and we're in demo mode
+  if (isDemoMode && allowDemo) {
+    return children;
   }
 
   // Redirect to home page if not authenticated

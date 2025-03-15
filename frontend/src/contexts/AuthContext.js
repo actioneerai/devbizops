@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import authService from '../services/authService';
 import { useNotification } from './NotificationContext';
 
@@ -11,21 +11,51 @@ export const useAuth = () => {
   return useContext(AuthContext);
 };
 
+// Demo user details
+const DEMO_USER = {
+  id: 'demo-user-id',
+  email: 'demo@devbizops.example',
+  user_metadata: {
+    name: 'Demo User',
+    role: 'Visitor',
+    company: 'DevBizOps Demo'
+  },
+  app_metadata: {
+    isDemo: true
+  }
+};
+
 // Provider component that wraps the app and makes auth object available to any
 // child component that calls useAuth().
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Get notification functions with fallbacks in case the context isn't available yet
   const notificationContext = useNotification();
   const success = notificationContext?.success || (msg => console.log('Success:', msg));
   const showError = notificationContext?.error || (msg => console.error('Error:', msg));
 
+  // Check if we're in demo mode from URL
+  useEffect(() => {
+    const isDemoPath = location.pathname.startsWith('/demo');
+    if (isDemoPath && !isDemoMode) {
+      setIsDemoMode(true);
+      setUser(DEMO_USER);
+      setLoading(false);
+    }
+  }, [location.pathname, isDemoMode]);
 
 
   useEffect(() => {
+    // Skip session check if in demo mode
+    if (isDemoMode) {
+      return;
+    }
+    
     // Check for existing session on component mount
     const checkUser = async () => {
       try {
@@ -53,7 +83,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkUser();
-  }, []);
+  }, [isDemoMode]);
 
   // Login function
   const login = async (email, password, rememberMe = false) => {
@@ -132,6 +162,12 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = async () => {
+    // In demo mode, redirect to demo home instead of logging out
+    if (isDemoMode) {
+      navigate('/demo');
+      return;
+    }
+    
     try {
       const { error } = await authService.logout();
       
@@ -221,6 +257,12 @@ export const AuthProvider = ({ children }) => {
     updatePassword,
     updateProfile,
     isAuthenticated: !!user,
+    isDemoMode,
+    enableDemoMode: () => {
+      setIsDemoMode(true);
+      setUser(DEMO_USER);
+      setLoading(false);
+    }
   };
 
   return (
