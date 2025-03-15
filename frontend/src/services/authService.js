@@ -11,35 +11,26 @@ const authService = {
    * @param {Object} userData - Additional user data (name, role, etc.)
    * @returns {Promise} - Promise with the registration result
    */
-  register: async (email, password, userData) => {
+  register: async (email, password, userData = {}) => {
     try {
       console.log('Attempting to register user:', email);
       
-      // Use our secure API endpoint instead of direct Supabase client
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'signup',
-          email,
-          password,
-          userData
-        }),
+      // Use Supabase directly for registration
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: userData
+        }
       });
       
-      const result = await response.json();
-      
-      if (!response.ok) {
-        console.error('Registration error:', result.error);
-        throw new Error(result.error || 'Registration failed');
+      if (error) {
+        console.error('Registration error:', error.message);
+        return { data: null, error };
       }
       
       console.log('User registered successfully');
-      
-      // Automatically sign in after registration
-      return await authService.login(email, password);
+      return { data, error: null };
     } catch (error) {
       console.error('Unexpected error during registration:', error);
       return { data: null, error };
@@ -56,28 +47,19 @@ const authService = {
     try {
       console.log('Attempting login for:', email);
       
-      // Use our secure API endpoint instead of direct Supabase client
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'signin',
-          email,
-          password
-        }),
+      // Use Supabase directly for login
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
       
-      const result = await response.json();
-      
-      if (!response.ok) {
-        console.error('Login error:', result.error);
-        throw new Error(result.error || 'Login failed');
+      if (error) {
+        console.error('Login error:', error.message);
+        return { data: null, error };
       }
 
       console.log('Login successful for:', email);
-      return { data: { user: result.user, session: result.session }, error: null };
+      return { data, error: null };
     } catch (error) {
       console.error('Unexpected error during login:', error);
       return { data: null, error };

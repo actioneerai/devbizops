@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }) => {
       showError('Login failed');
       return { error: { message: 'Login failed' } };
     } catch (err) {
+      console.error('Login error in AuthContext:', err);
       showError('An unexpected error occurred');
       return { error: { message: 'An unexpected error occurred' } };
     } finally {
