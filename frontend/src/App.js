@@ -1,16 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Register from './pages/Register';
+import { Outlet } from 'react-router-dom';
+import './App.css';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/register" element={<Register />} />
-        {/* You can add other routes here */}
-        <Route path="*" element={<div>Page not found</div>} />
-      </Routes>
-    </Router>
+    <div className="App">
+      <Outlet />
+    </div>
   );
 }
 

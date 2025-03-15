@@ -5,7 +5,6 @@ import Dashboard from '../pages/Dashboard';
 import Settings from '../pages/Settings';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
-import NotificationDemo from '../components/NotificationDemo';
 import ProtectedRoute from '../components/ProtectedRoute';
 import AuthenticatedLayout from '../components/AuthenticatedLayout';
 
@@ -44,10 +43,6 @@ const router = createBrowserRouter([
           {
             path: 'settings',
             element: <Settings />,
-          },
-          {
-            path: 'notification-demo',
-            element: <NotificationDemo />,
           },
         ],
       },
