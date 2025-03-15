@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && CI=false npm run build",
+  "buildCommand": "cd frontend && npm install && CI=false REACT_APP_SUPABASE_URL=$SUPABASE_URL REACT_APP_SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY npm run build",
   "outputDirectory": "frontend/build",
   "framework": "create-react-app"
 }
